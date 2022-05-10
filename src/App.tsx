@@ -13,10 +13,12 @@ let user2 = '';
 function MyField(
   {
     fieldLabel,
+    fieldValue,
     handleChange
   }:
     {
       fieldLabel: string,
+      fieldValue: string,
       handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void
     }
 ) {
@@ -27,6 +29,7 @@ function MyField(
       label={fieldLabel}
       multiline
       rows={4}
+      value={fieldValue}
       onChange={handleChange}
     />
   );
@@ -36,6 +39,10 @@ function App() {
   // state of result boxes
   const [user1result, setUser1Result] = React.useState('');
   const [user2result, setUser2Result] = React.useState('');
+
+  const [initialFieldValue, setInitialFieldValue] = React.useState('');
+  const [user1FieldValue, setUser1FieldValue] = React.useState('');
+  const [user2FieldValue, setUser2FieldValue] = React.useState('');
 
   // compute changes between initialText and finalText using diff,
   // then perform those changes on the Automerge.Text object in doc, and return it
@@ -102,25 +109,39 @@ function App() {
     <div className='App'>
       <Grid container spacing={2} columns={2}>
         <Grid item xs={2}>
-          <MyField fieldLabel={'Initial text'} handleChange={
+          <MyField fieldLabel={'Initial text'} fieldValue={initialFieldValue} handleChange={
             (event: React.ChangeEvent<HTMLInputElement>) => {
               initial = event.target.value;
+              // if the contents of initial and user1 text fields were the same before this event,
+              // then make user1 copy initial
+              if (initialFieldValue === user1FieldValue) {
+                user1 = initial;
+                setUser1FieldValue(initial);
+              }
+              // likewise for user2
+              if (initialFieldValue === user2FieldValue) {
+                user2 = initial;
+                setUser2FieldValue(initial);
+              }
+              setInitialFieldValue(initial);
               runAutomerge();
             }
           }/>
         </Grid>
         <Grid item xs={1}>
-          <MyField fieldLabel={"User 1's changes"} handleChange={
+          <MyField fieldLabel={"User 1's changes"} fieldValue={user1FieldValue} handleChange={
             (event: React.ChangeEvent<HTMLInputElement>) => {
               user1 = event.target.value;
+              setUser1FieldValue(user1);
               runAutomerge();
             }
           }/>
         </Grid>
         <Grid item xs={1}>
-          <MyField fieldLabel={"User 2's changes"} handleChange={
+          <MyField fieldLabel={"User 2's changes"} fieldValue={user2FieldValue} handleChange={
             (event: React.ChangeEvent<HTMLInputElement>) => {
               user2 = event.target.value;
+              setUser2FieldValue(user2);
               runAutomerge();
             }
           }/>
