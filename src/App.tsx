@@ -34,8 +34,8 @@ function MyField(
 
 function App() {
   // state of result boxes
-  const [user1result, setUser1Result] = React.useState('Something');
-  const [user2result, setUser2Result] = React.useState('Something else');
+  const [user1result, setUser1Result] = React.useState('');
+  const [user2result, setUser2Result] = React.useState('');
 
   // compute changes between initialText and finalText using diff,
   // then perform those changes on the Automerge.Text object in doc, and return it
@@ -110,7 +110,7 @@ function App() {
           }/>
         </Grid>
         <Grid item xs={1}>
-          <MyField fieldLabel={'User 1'} handleChange={
+          <MyField fieldLabel={"User 1's changes"} handleChange={
             (event: React.ChangeEvent<HTMLInputElement>) => {
               user1 = event.target.value;
               runAutomerge();
@@ -118,22 +118,35 @@ function App() {
           }/>
         </Grid>
         <Grid item xs={1}>
-          <MyField fieldLabel={'User 2'} handleChange={
+          <MyField fieldLabel={"User 2's changes"} handleChange={
             (event: React.ChangeEvent<HTMLInputElement>) => {
               user2 = event.target.value;
               runAutomerge();
             }
           }/>
         </Grid>
-        {/* TODO: merge these two elements into one when their values are the same */}
-        <Grid item xs={1}>
-          <h2>User 1 result</h2>
-          <p>{user1result}</p>
-        </Grid>
-        <Grid item xs={1}>
-          <h2>User 2 result</h2>
-          <p>{user2result}</p>
-        </Grid>
+        {
+          user1result === user2result
+            ? <>
+              <Grid item xs={2}>
+                <h2>Merge successful!</h2>
+                <p>{user1result}</p>
+              </Grid>
+            </>
+            : <>
+              <Grid item xs={2}>
+                <h2>Merge failed!</h2>
+              </Grid>
+              <Grid item xs={1}>
+                <h2>{"User 1 <- User 2"}</h2>
+                <p>{user1result}</p>
+              </Grid>
+              <Grid item xs={1}>
+                <h2>{"User 2 <- User 1"}</h2>
+                <p>{user2result}</p>
+              </Grid>
+            </>
+        }
       </Grid>
     </div>
   );
