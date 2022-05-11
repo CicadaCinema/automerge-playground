@@ -1,2 +1,2 @@
 # Automerge Playground
-## https://cicadacinema.github.io/automerge-playground/
+## https://automerge-playground.vercel.app/
