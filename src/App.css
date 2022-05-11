@@ -11,6 +11,15 @@
   text-align: start;
 }
 
+.MyPaper {
+  display: inline-block;
+}
+
 a:visited {
   color: #00E;
+}
+
+pre {
+  margin: 1rem;
+  font-family: inherit;
 }

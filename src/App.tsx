@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import * as Diff from 'diff';
 import * as Automerge from 'automerge'
@@ -34,6 +35,14 @@ function MyField(
       onChange={handleChange}
     />
   );
+}
+
+function MyResultDisplay({textContent}: { textContent: string }) {
+  return <Paper variant="outlined" className="MyPaper">
+    <pre>
+      {textContent}
+    </pre>
+  </Paper>
 }
 
 function App() {
@@ -212,7 +221,7 @@ function App() {
             ? <>
               {user1result !== '' && <Grid item xs={2}>
                 <h2>Merge successful!</h2>
-                <p>{user1result}</p>
+                <MyResultDisplay textContent={user1result}/>
               </Grid>}
             </>
             : <>
@@ -221,11 +230,11 @@ function App() {
               </Grid>
               <Grid item xs={1}>
                 <h2>{"User 1 <- User 2"}</h2>
-                <p>{user1result}</p>
+                <MyResultDisplay textContent={user1result}/>
               </Grid>
               <Grid item xs={1}>
                 <h2>{"User 2 <- User 1"}</h2>
-                <p>{user2result}</p>
+                <MyResultDisplay textContent={user2result}/>
               </Grid>
             </>
         }
