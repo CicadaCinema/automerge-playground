@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import * as Diff from 'diff';
@@ -40,9 +41,14 @@ function App() {
   const [user1result, setUser1Result] = React.useState('');
   const [user2result, setUser2Result] = React.useState('');
 
+  // state of user-modifiable fields
+  // we need to be able to set the value of user1FieldValue and user2FieldValue in response to changes to initialFieldValue
   const [initialFieldValue, setInitialFieldValue] = React.useState('');
   const [user1FieldValue, setUser1FieldValue] = React.useState('');
   const [user2FieldValue, setUser2FieldValue] = React.useState('');
+
+  // visibility of additional info paragraphs
+  const [isInfoVisible, setIsInfoVisible] = React.useState(false);
 
   // compute changes between initialText and finalText using diff,
   // then perform those changes on the Automerge.Text object in doc, and return it
@@ -99,6 +105,7 @@ function App() {
     doc2 = doMagic(initial, user2, doc2);
 
     // merge the two documents one way, and then the other
+    // TODO: is there anything I can do about the typescript errors here rather than ignoring them?
     // @ts-ignore
     setUser1Result(Automerge.merge(Automerge.clone(doc1), Automerge.clone(doc2)).text.toString());
     // @ts-ignore
@@ -107,6 +114,60 @@ function App() {
 
   return (
     <div className='App'>
+      <h1>Automerge Playground</h1>
+      <div className='Intro'>
+        <p>
+          This webpage allows you to experiment with the Automerge.Text sync protocol. It simulates the scenario of two
+          users working on a text document concurrently, which is then synced to merge both their changes. The protocol
+          used by Automerge.Text is itself a variant of the RGA/Causal Trees algorithm (see <a
+          href='http://csl.snu.ac.kr/papers/jpdc11.pdf'>this paper</a> and <a
+          href='https://web.archive.org/web/20170821171430/http://www.ds.ewi.tudelft.nl/~victor/polo.pdf'>this paper</a>).
+        </p>
+        <p>
+          <a href='https://github.com/CicadaCinema/automerge-playground'>Source code</a>
+        </p>
+      </div>
+      <div className={'MarginBottom'}>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            setIsInfoVisible(!isInfoVisible);
+          }}
+        >
+          {isInfoVisible ? 'Hide more' : 'Show more'}
+        </Button>
+
+      </div>
+      {isInfoVisible && <div className='Intro'>
+
+        <h2>Usage</h2>
+        <ol>
+          <li>
+            Enter some text in the first text field. This represents the initial state of the document. The two text
+            fields below should populate themselves with the same text.<br/>For example, try entering "Hello!".
+          </li>
+          <li>
+            Modify the contents of the two fields below. This represents the two users making changes to the document
+            independently of one another.<br/>For example, try entering "Hello World!" and "Hello! :-)".
+          </li>
+          <li>
+            Observe the merged document text at the bottom of the page. Each of the user's changes should be
+            incorporated into the final document.<br/>Following the example above, the result should be "Hello World!
+            :-)".
+          </li>
+        </ol>
+
+        <h2>Note</h2>
+        <p>
+          It doesn't matter <i>how</i> or <i>in what order</i> the changes in each of the user's text fields are made.
+          The shortest edit script between the initial document text and each of the user's modified documents is
+          computed on the fly using <a href='http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.4.6927'>the O(ND)
+          Difference Algorithm</a> proposed by Eugene Myers. This means that the final merged document is generated
+          deterministically, regardless of what operations you perform with your cursor and keyboard.
+        </p>
+        <br/>
+      </div>}
+
       <Grid container spacing={2} columns={2}>
         <Grid item xs={2}>
           <MyField fieldLabel={'Initial text'} fieldValue={initialFieldValue} handleChange={
@@ -149,10 +210,10 @@ function App() {
         {
           user1result === user2result
             ? <>
-              <Grid item xs={2}>
+              {user1result !== '' && <Grid item xs={2}>
                 <h2>Merge successful!</h2>
                 <p>{user1result}</p>
-              </Grid>
+              </Grid>}
             </>
             : <>
               <Grid item xs={2}>

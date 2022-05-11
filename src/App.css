@@ -2,3 +2,15 @@
   text-align: center;
   padding: 2rem;
 }
+
+.MarginBottom {
+  margin-bottom: 2rem;
+}
+
+.Intro {
+  text-align: start;
+}
+
+a:visited {
+  color: #00E;
+}
